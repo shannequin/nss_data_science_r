@@ -1,0 +1,66 @@
+---
+title: "Warmup 1/8/25"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+### Part 1
+
+You've been tasked with cleaning the results from a customer feedback survey. Customers were asked to provide their response as a number between 1 and 10. However, the form was free-text, so some people may have entered numbers, words, or even symbols.
+
+For the purposes of this exercise, we'll ignore any values that a non-numeric in calculating this average.
+
+Find the average of the numeric entries of the feedback vector.
+
+```{r}
+feedback <- c(8, "Good", 6.0, "N/A", 9, "Average", 10, 3, "Poor", 7)
+```
+
+Hint: You can convert the feedback vector to a numeric one by using the as.numeric function. 
+
+Hint 2: Look at the arguments of the mean function. How can you deal with NA values?
+
+```{r}
+feedback |> 
+  as.numeric() |> 
+  mean(na.rm = TRUE)
+```
+
+### Part 2
+
+In the data folder is a file, store_feedback.json. It contains the feedback for a few different stores. 
+
+Import the [jsonlite package](https://cran.r-project.org/web/packages/jsonlite/index.html). Use the [fromJSON function](https://www.rdocumentation.org/packages/rjson/versions/0.2.23/topics/fromJSON) to read in the data from the file. Then use the [as_tibble function](https://www.rdocumentation.org/packages/tibble/versions/1.4.2/topics/as_tibble) to convert to a tidyverse tibble.
+
+```{r}
+library(jsonlite)
+```
+
+```{r}
+store_feedback <- fromJSON(txt = "../data/store_feedback.json") |> 
+  as_tibble()
+
+store_feedback
+```
+
+
+### Part 3
+Now, use the [unnest function](https://tidyr.tidyverse.org/reference/unnest.html) to split the feedback values out. Then find the average feedback score per store.
+
+```{r}
+store_feedback <- unnest(data = store_feedback, cols = feedback)
+
+store_feedback
+```
+
+```{r}
+store_feedback |> 
+  group_by(store_number) |> 
+  summarise(
+    mean_feedback = mean(as.numeric(feedback), na.rm = TRUE)
+  )
+```
+

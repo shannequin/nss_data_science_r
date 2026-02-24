@@ -1,0 +1,182 @@
+[
+  {
+    "title": "Data Analyst",
+    "skills": ["python", "sql"],
+    "years_experience": 2,
+    "salary": 72000
+  },
+  {
+    "title": "Marketing Analyst",
+    "skills": ["excel", "sql"],
+    "years_experience": 1,
+    "salary": 65000
+  },
+  {
+    "title": "Business Analyst",
+    "skills": ["excel", "powerbi"],
+    "years_experience": 2,
+    "salary": 68000
+  },
+  {
+    "title": "Machine Learning Engineer",
+    "skills": ["python", "tensorflow", "sql"],
+    "years_experience": 4,
+    "salary": 115000
+  },
+  {
+    "title": "Data Engineer",
+    "skills": ["python", "sql", "aws"],
+    "years_experience": 3,
+    "salary": 105000
+  },
+  {
+    "title": "Operations Analyst",
+    "skills": ["excel"],
+    "years_experience": 1,
+    "salary": 60000
+  },
+  {
+    "title": "Quantitative Analyst",
+    "skills": ["python", "statistics"],
+    "years_experience": 3,
+    "salary": 98000
+  },
+  {
+    "title": "Financial Analyst",
+    "skills": ["excel", "statistics"],
+    "years_experience": 2,
+    "salary": 75000
+  },
+  {
+    "title": "Product Analyst",
+    "skills": ["sql", "statistics"],
+    "years_experience": 2,
+    "salary": 82000
+  },
+  {
+    "title": "AI Researcher",
+    "skills": ["python", "tensorflow"],
+    "years_experience": 5,
+    "salary": 130000
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "skills": ["sql", "powerbi"],
+    "years_experience": 3,
+    "salary": 90000
+  },
+  {
+    "title": "Data Scientist",
+    "skills": ["python", "sql", "statistics"],
+    "years_experience": 4,
+    "salary": 112000
+  },
+  {
+    "title": "Junior Data Analyst",
+    "skills": ["excel", "sql"],
+    "years_experience": 1,
+    "salary": 58000
+  },
+  {
+    "title": "ETL Developer",
+    "skills": ["sql", "aws"],
+    "years_experience": 3,
+    "salary": 95000
+  },
+  {
+    "title": "ML Ops Engineer",
+    "skills": ["python", "aws"],
+    "years_experience": 4,
+    "salary": 118000
+  },
+  {
+    "title": "Risk Analyst",
+    "skills": ["statistics"],
+    "years_experience": 2,
+    "salary": 72000
+  },
+  {
+    "title": "Reporting Analyst",
+    "skills": ["excel", "powerbi"],
+    "years_experience": 2,
+    "salary": 69000
+  },
+  {
+    "title": "Deep Learning Engineer",
+    "skills": ["python", "tensorflow", "aws"],
+    "years_experience": 5,
+    "salary": 140000
+  },
+  {
+    "title": "Revenue Analyst",
+    "skills": ["excel", "sql", "powerbi"],
+    "years_experience": 2,
+    "salary": 77000
+  },
+  {
+    "title": "Financial Modeler",
+    "skills": ["python", "excel"],
+    "years_experience": 3,
+    "salary": 88000
+  },
+  {
+    "title": "Database Administrator",
+    "skills": ["sql", "aws"],
+    "years_experience": 4,
+    "salary": 102000
+  },
+  {
+    "title": "AI Product Manager",
+    "skills": ["python", "sql"],
+    "years_experience": 5,
+    "salary": 125000
+  },
+  {
+    "title": "Research Scientist",
+    "skills": ["python", "tensorflow", "statistics"],
+    "years_experience": 5,
+    "salary": 135000
+  },
+  {
+    "title": "Data Quality Analyst",
+    "skills": ["excel", "sql"],
+    "years_experience": 1,
+    "salary": 64000
+  },
+  {
+    "title": "Economist",
+    "skills": ["statistics", "python"],
+    "years_experience": 4,
+    "salary": 99000
+  },
+  {
+    "title": "Cloud Data Engineer",
+    "skills": ["python", "aws", "sql"],
+    "years_experience": 4,
+    "salary": 122000
+  },
+  {
+    "title": "Supply Chain Analyst",
+    "skills": ["excel", "sql", "powerbi"],
+    "years_experience": 2,
+    "salary": 70000
+  },
+  {
+    "title": "Customer Insights Analyst",
+    "skills": ["sql", "statistics"],
+    "years_experience": 3,
+    "salary": 83000
+  },
+  {
+    "title": "Forecasting Analyst",
+    "skills": ["python", "statistics", "excel"],
+    "years_experience": 3,
+    "salary": 91000
+  },
+  {
+    "title": "Senior Data Scientist",
+    "skills": ["python", "tensorflow", "sql", "statistics"],
+    "years_experience": 6,
+    "salary": 145000
+  }
+]

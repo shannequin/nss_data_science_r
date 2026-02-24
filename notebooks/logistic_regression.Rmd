@@ -1,0 +1,114 @@
+---
+title: "Warmup 01/15/26"
+output: html_notebook
+---
+
+In this warmup, you'll see how to build a logistic regression model using R.
+
+For this, we'll be using the Titanic dataset.
+
+```{r}
+library(tidyverse)
+
+titanic <- read_csv("../data/titanic.csv")
+titanic
+```
+
+**Question 1:** Fit a logistic regression model to estimate the probability that a passenger survived based on their age.
+
+Hint: Check out https://statsandr.com/blog/binary-logistic-regression-in-r/#binary-logistic-regression-in-r#binary-logistic-regression-in-r to see the syntax for fitting a logistic regression model in R.
+
+```{r}
+# Create a binary logicstic regression model
+model = glm(Survived ~ Age, data = titanic, family = "binomial")
+
+summary(model)
+```
+```{r}
+# Get the odds ratio for Age
+exp(coef(model)["Age"])
+```
+
+What does the model estimate for the probability of survival for a 20 year old passenger? For a 70 year old passenger?
+
+Hint: You can use the predict function, like you did for linear regression. However, you'll need to specify the type of output you want. See https://www.statology.org/r-logistic-regression-predict/
+```{r}
+# Calculate probability of survival for 20 years old
+predict(model,
+  newdata = data.frame(Age = c(20, 70)),
+  type = "response"
+)
+```
+```{r}
+# Calculate probability of survival for 70 years old
+predict(model,
+  newdata = data.frame(Age = c(70)),
+  type = "response"
+)
+```
+
+**Part 2:** Fit a logistic regression model to estimate the probability of survival based on the passenger's sex.
+```{r}
+# Create a binary logicstic regression model
+model = glm(Survived ~ Sex, data = titanic, family = "binomial")
+
+summary(model)
+```
+```{r}
+# Get the odds ratio for Sex
+exp(coef(model)["Sex"])
+```
+
+What does the model estimate as the probability of survival for a male passenger? For a female passenger?
+```{r}
+# Calculate probability of survival for male
+predict(model,
+  newdata = data.frame(Sex = c("male", "female")),
+  type = "response"
+)
+```
+```{r}
+# Calculate probability of survival for female
+predict(model,
+  newdata = data.frame(Sex = c("female")),
+  type = "response"
+)
+```
+
+**Part 3:** Fit a new model to estimate the probability of survival using age, sex, and passenger class.
+Make sure that the model is treating the passenger class as a categorical variable, not as a numeric one.
+Hint: You may want to convert the Pclass variable to a factor. See https://www.statology.org/r-linear-regression-with-categorical-variables/
+You can read more about factors in [Chapter 15 of R for Data Science](https://r4ds.had.co.nz/factors.html).
+
+
+```{r}
+# Convert Pclass to a factor type
+titanic$Pclass <- as.factor(titanic$Pclass)
+```
+
+
+```{r}
+# Create a binary logicstic regression model
+model = glm(Survived ~ Age + Sex + Pclass, data = titanic, family = "binomial")
+
+summary(model)
+```
+
+What does the model estimate for the probability of a 20 year old female in first class surviving? A 50 year old male in 3rd class?
+
+```{r}
+# Calculate probability of survival for 20 year old female in first class
+predict(model,
+  newdata = data.frame(Age = c(20, 50), Sex = c("female", "male"), Pclass = c("1", "3")),
+  type = "response"
+)
+```
+
+```{r}
+# Calculate probability of survival for 50 year old male in 3rd class
+predict(model,
+  newdata = data.frame(Age = c(50), Sex = c("male"), Pclass = c("3")),
+  type = "response"
+)
+```
+

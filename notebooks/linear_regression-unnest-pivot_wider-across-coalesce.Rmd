@@ -1,0 +1,120 @@
+---
+title: "Warmup 1/10/26"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(jsonlite)
+
+job_postings <- fromJSON("../data/job_postings.json") |> 
+  as_tibble()
+
+job_postings
+```
+
+**Part 1: Salary vs. Years of Experience**
+Fit a linear regression model with target salary, using years_experience as the predictor variable.
+
+Hint: See [How to Do Linear Regression in R](https://www.datacamp.com/tutorial/linear-regression-R).
+
+```{r}
+# Create a linear regression model
+job_lm = lm(salary ~ years_experience, data = job_postings)
+
+# Display the coefficients
+job_lm
+```
+
+**Part 2:**
+What does your model estimate for the average salary for jobs requiring 0 years of experience? 5 years of experience?
+
+Hint: You can use the predict function to generate estimates. You can pass in a tibble for the newdata argument.
+
+Hint 2: You can create a tibble by using the tibble function.
+
+```{r}
+# Jobs requiring 0 years experience is equal to the intercept $39,543.
+
+# Create a tibble for years experience to predict
+new_data = tibble(years_experience = c(0,5))
+
+# Use predict function with linear regression model and new tibble
+predict(object = job_lm, newdata = new_data)
+```
+
+**Part 3:** Now, let's see how we can incorporate the skills column into our model.
+
+First, use the unnest function to expand out the skills column.
+
+```{r}
+# Unnest the skills column
+job_postings <- job_postings |> 
+  unnest(cols = skills)
+
+# Display sample
+job_postings |> 
+  slice_sample(n = 2)
+```
+
+We're going to use the pivot_wider function. To make this work, we need to start by creating a "value" column that contains 1. Use the mutate function to accomplish this.
+
+```{r}
+# Create a column 
+job_postings <- job_postings |> 
+  mutate(value = 1, .after = skills)
+
+# Display sample
+job_postings |> 
+  slice_sample(n = 2)
+```
+
+
+Now, use the pivot_wider function to create a column for each skill. Make sure to add a prefix of "skill_" to the column names.
+```{r}
+# Pivot wider to create columns for each skill
+job_postings_pivot <- job_postings |> 
+  pivot_wider(names_from = skills, values_from = value, names_prefix = "skill_", values_fill = 0)
+
+# Display head
+job_postings_pivot |> 
+  head(5)
+```
+
+Finally, we need to fill in the missing values with 0's. 
+
+Use mutate in combination with the [across function](https://dplyr.tidyverse.org/reference/across.html). Hint: you can select columns inside of across using [starts_with](https://tidyselect.r-lib.org/reference/starts_with.html). 
+
+You can use the coalesce function to fill in missing values with a 0.
+
+```{r}
+# Practice using mutate across
+job_postings_pivot_2 <- job_postings |> 
+  pivot_wider(names_from = skills, values_from = value, names_prefix = "skill_")|> 
+  mutate(across(starts_with("skill"), ~replace_na(.x, 0)))
+
+# Display head
+job_postings_pivot_2 |> 
+  head(5)
+```
+
+```{r}
+# Practice using mutate across
+job_postings_pivot_3 <- job_postings |> 
+  pivot_wider(names_from = skills, values_from = value, names_prefix = "skill_")|> 
+  mutate(across(starts_with("skill"), ~coalesce(.x, 0)))
+
+# Display head
+job_postings_pivot_3 |> 
+  head(5)
+```
+
+Now, fit a linear regression model for salary using the years_experience plus all of the skill columns.
+
+Which skill has the largest positive impact on the estimated average salary?
+
+```{r}
+job_lm_2 = lm(salary ~ ., data = job_postings_pivot |> select(!title))
+
+job_lm_2
+```

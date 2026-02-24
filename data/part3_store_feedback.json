@@ -1,0 +1,42 @@
+[
+    {
+        "store_number": 101,
+        "feedback": [7, "Great service", 9.0, "N/A", 8, "Poor selection", "Fast checkout"]
+    },
+    {
+        "store_number": 102,
+        "feedback": ["Excellent", 8.0, 5, "Loved it!", 3.5]
+    },
+    {
+        "store_number": 103,
+        "feedback": ["Amazing", 10, 6.5, "Slow service", 8, "Average", 2.0, "Friendly staff"]
+    },
+    {
+        "store_number": 104,
+        "feedback": [9.5, "Fantastic", 6, "Too crowded", 7.5, "No complaints", 10, 3]
+    },
+    {
+        "store_number": 105,
+        "feedback": ["Great products", 8, "Too pricey", 9.0, "Will return"]
+    },
+    {
+        "store_number": 106,
+        "feedback": ["Helpful staff", "Love the ambiance", "Very organized"]
+    },
+    {
+        "store_number": 107,
+        "feedback": [4, "Needs improvement", 7.0, "Unfriendly staff", 5.5, "Okay", 8]
+    },
+    {
+        "store_number": 108,
+        "feedback": [10, 9.0, "Best experience", 6, 7.5, "Could be better", 5]
+    },
+    {
+        "store_number": 109,
+        "feedback": ["Average service", "Too busy", 5.0, 3, "Noisy", 6.5]
+    },
+    {
+        "store_number": 110,
+        "feedback": ["Unorganized", "No assistance", "Messy"]
+    }
+]

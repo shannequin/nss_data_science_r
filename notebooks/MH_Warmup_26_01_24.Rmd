@@ -1,0 +1,107 @@
+---
+title: "Warmup 26_01_24"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+**Part 1:**
+The Public Health Department wants to see whether the number of community outreach events affects the number of people vaccinated in different districts.
+
+The following tibble contains the number of outreach events and the number vaccinated by district.
+
+```{r}
+vaccinations <- tibble(
+  district = c("A", "B", "C", "D", "E"),
+  outreach_events = c(2, 5, 3, 7, 4),
+  vaccinated = c(40, 120, 65, 200, 90)
+)
+vaccinations
+```
+
+Fit a Poisson regression predicting vaccinated from outreach events.
+
+```{r}
+model1 <- glm(
+  vaccinated ~ outreach_events,
+  data = vaccinations,
+  family = 'poisson'
+)
+summary(model1)
+```
+
+Interpret the coefficient you get for outreach_events.
+Hint: You can use the coef function to extract the coefficients from a model.
+
+```{r}
+model1 |> coef() |> exp()
+```
+
+An increase of one in outreach events leads to an increase in the estimated number vaccinated of 34.4%
+
+Estimate the average number vaccinated in a district that holds 2 outreach events. 
+Note: you may need to use the type argument ot the predict function. See https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/predict.glm 
+
+```{r}
+predict(model1, newdata = tibble(outreach_events = c(2)), type = 'response')
+```
+
+
+**Part 2:**
+
+The department now wants to look at reported cases of respiratory illness across counties with different population sizes, trying to see the effect of a county being urban or rural.
+
+```{r}
+cases <- tibble(
+  county = c("X", "Y", "Z", "W", "V", "U"),
+  cases = c(80, 30, 100, 25, 110, 20),
+  population = c(120000, 80000, 200000, 70000, 250000, 60000),
+  urban = c(1, 0, 1, 0, 1, 0)
+)
+cases
+```
+
+Why would modeling cases alone be misleading?
+
+Fit a Poisson regression model estimated the average number of cases based on the urban variable, using population as an offset.
+
+```{r}
+model2 <- glm(
+  cases ~ urban,
+  data = cases,
+  family = 'poisson',
+  offset = log(population)
+)
+
+summary(model2)
+```
+
+Interpret the coefficient on urban.
+
+```{r}
+model2 |> coef() |> exp()
+```
+
+For two counties with the same population, an urban one would have a 42.5% higher estimated average rate of cases.
+
+What does the model estimate for the average number of cases for an urban county with a population of 150000? For a rural county with a population of 40000?
+
+```{r}
+predict(
+  model2,
+  newdata = tibble(urban = c(1, 0), population = c(150000, 40000)),
+  type = 'response'
+)
+```
+
+```{r}
+predict(
+  model2,
+  newdata = tibble(urban = c(1, 0), population = c(150000, 150000)),
+  type = 'response'
+)
+```
+
+

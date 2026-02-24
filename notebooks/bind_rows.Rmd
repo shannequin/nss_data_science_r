@@ -1,0 +1,65 @@
+---
+title: "Warmup 12/20/25"
+output: html_notebook
+---
+
+For this warmup, you've been provided four csv files containing sales data by region for the years 2019 through 2022 (e.g., sales_2019.csv, sales_2020.csv, etc.).
+Each file includes columns for region and sales, but no year column.
+
+```{r}
+library(tidyverse)
+```
+
+Our goal will be to read in and combine all 4 years.
+
+**Part 1:** Start by creating a vector, years, which contains the numbers 2019 through 2022. Hint: you can use the [sequence operator](https://wec.wur.nl/r/swirl/sequences-of-numbers.html) to accomplish this.
+
+```{r}
+years <- seq(2019, 2022)
+```
+
+
+**Part 2:**
+To construct a filename, you can use the paste0 function. In the Help panel on the right, search for the paste0 function to see how it works. Try pasting together the string "../data/sales_", the number 2019, and then then string ".csv".
+```{r}
+paste0("../data/sales_", 2019)
+```
+
+**Part 3:** Use the [map function with an anonymous function](https://purrr.tidyverse.org/reference/map.html) to create a list containing a tibble for each year.
+
+```{r}
+sales <- map(years, \(years) paste0("../data/sales_", years, ".csv")) |> 
+  map(read_csv)
+```
+
+**Part 4:** We can use the [bind_rows function](https://dplyr.tidyverse.org/reference/bind_rows.html) to combine all of the sales data into a single tibble. When we do this, we want to make sure to be able to tell which year the data came from. 
+First, search the Help for the names function. Use this function to set the name of each tibble in the list you created to the year it represents.
+Then, use the bind_rows function along with the .id parameter to create a single tibble with a year column.
+
+```{r}
+names(sales) <- years
+```
+
+
+```{r}
+all_sales <- bind_rows(sales, .id="year")
+```
+
+**Part 5:** Which year had the highest total sales?
+```{r}
+all_sales |> 
+  group_by(year) |> 
+  summarize(sum_sales = sum(sales)) |> 
+  # arrange(desc(sum_sales)) |> 
+  slice_max(sum_sales)
+```
+
+**Part 6:** Which region had the highest total combined sales across all 4 years?
+```{r}
+all_sales |> 
+  group_by(region) |> 
+  summarize(sum_sales = sum(sales)) |> 
+  # arrange(desc(sum_sales)) |> 
+  slice_max(sum_sales)
+```
+

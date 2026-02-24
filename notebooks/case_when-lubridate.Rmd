@@ -1,0 +1,71 @@
+---
+title: "Warmup 1/17/26"
+output: html_notebook
+---
+
+In this warmup, you'll be using the wego data.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+wego <- read_csv("../data/Route 50 Timepoint and Headway Data, 1-1-2023 through 5-12-2025.csv")
+```
+
+The goal of the project is to find the proportion of stops that are late by time of day.
+
+We'll do this based on the hour of the SCHEDULED_TIME column.
+
+**Part 1:** Create an hour column by extracting the hour from the SCHEDULED_TIME column.
+
+Hint: you can use the [hms function from the lubridate library](https://lubridate.tidyverse.org/reference/hms.html), along with the [hour function](https://lubridate.tidyverse.org/reference/hour.html).
+
+```{r}
+wego <- wego |> 
+  mutate(HOUR = hour(hms(str_sub(SCHEDULED_TIME, start = -8L, end = -1L))))
+
+wego |> 
+  slice_head(n = 1)
+```
+
+**Part 2:** If you haven't already, investigate rows that result in NA values above. You should find that the format of the scheduled time is not consistent for those. Adjust your code to correct that.
+
+Hint: You may want to use string methods, like [str_sub from the stringr library](https://stringr.tidyverse.org/reference/str_sub.html).
+
+```{r}
+wego |> 
+  distinct(HOUR)
+```
+
+**Part 3:** Create a time_of_day column by using case_when and the following rules:
+
+early_morning: 4:00 - 5:59
+morning_peak: 6:00 - 8:59
+midday: 9:00 - 14:59
+pm_peak: 15:00 - 17:59
+evening: 18:00 - 20:59
+late_night: 21:00 - 1:59
+
+Hint: Use case_when for this.
+
+```{r}
+wego <- wego |> 
+  mutate(TIME_OF_DAY = case_when(HOUR >= 4 & HOUR < 6 ~ "early_morning",
+                                 HOUR >= 6 & HOUR < 9 ~ "morning_peak",
+                                 HOUR >= 9 & HOUR < 15 ~ "midday",
+                                 HOUR >= 15 & HOUR < 18 ~ "pm_peak",
+                                 HOUR >= 18 & HOUR < 21 ~ "evening",
+                                 HOUR >= 21 | HOUR < 2 ~ "late_night",
+                                 TRUE ~ NA_character_))
+
+wego |> 
+  slice_head(n = 1)
+```
+
+**Part 4:** Which time of day has the highest percentage of late stops?
+
+```{r}
+wego |> 
+  group_by(TIME_OF_DAY) |> 
+  summarize(LATE_PERCENT = mean(ADJUSTED_LATE_COUNT))
+```
