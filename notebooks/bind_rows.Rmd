@@ -26,6 +26,7 @@ paste0("../data/sales_", 2019)
 ```
 
 **Part 3:** Use the [map function with an anonymous function](https://purrr.tidyverse.org/reference/map.html) to create a list containing a tibble for each year.
+(The biggest difference between dplyr and purrr is that dplyr is designed to work on data.frames only, and purrr is designed to work on every kind of lists. Data.frames being lists, you can also use purrr for iterating on a data.frame.)
 
 ```{r}
 sales <- map(years, \(years) paste0("../data/sales_", years, ".csv")) |> 

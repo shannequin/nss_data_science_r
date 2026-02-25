@@ -1,0 +1,274 @@
+---
+title: "shannon_r_assessment"
+output: html_document
+---
+
+**Academic Integrity Notice**
+
+> Your submission must be your own work. You should be prepared to explain any code or answers you submit if asked.  
+> Use of generative AI tools (such as ChatGPT, Copilot, Gemini, etc.) to create or modify code or text for this assessment is not permitted.  
+> If you consulted any external resources (such as documentation or tutorials), you must include the full URL of each site you used with your answer.
+
+*Datasets*
+Two datasets are provided with this assessment:
+- emissions tracker data (`climate.csv`)
+- a table of country names and ISO country codes (`country_codes.csv`)
+
+The data from climate.csv comes from the [Climate Action Tracker](https://climateactiontracker.org/), an organization that keeps track of countries' progress in tackling climate change. 
+
+*Instructions*
+# 1. Create a new R notebook. Name your file as <firstname_R_assessment>.Rmd. For example, my notebook would be named `michael_R_assessment.Rmd`
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+
+# 2. Read in the data from climate.csv. How many rows and columns does this dataset have?
+```{r}
+climate_df <- read_csv("../data/climate.csv")
+
+climate_df |> summary()
+```
+ANSWER: CLIMATE DF CONTAINS 37625 ROWS & 7 COLUMNS
+
+
+# 3. Read in the country_codes.csv data. This contains country names and 2 and 3-letter ISO country codes.
+```{r}
+country_codes_df <- read_csv("../data/country_codes.csv")
+```
+
+
+Merge this with the original dataset (keeping only those rows that have matches on the 2-letter country code in both tables). At this point, feel free to rename columns and/or drop any columns that you think will not be useful.
+```{r}
+climate_country_df <- country_codes_df |> 
+    inner_join(
+        climate_df,
+        by = join_by(`A2 (ISO)` == Country)
+    ) |> 
+    clean_names(case = "screaming_snake") |> 
+    select(COUNTRY, INDICATOR, UNIT, YEAR, VALUE)
+
+climate_country_df |> head(5)
+```
+
+
+# 4. After the merge, how many countries are left in the dataset?
+```{r}
+climate_country_df |> 
+    distinct(COUNTRY) |> 
+    count()
+```
+ANSWER: AFTER THE MERGE, 35 COUNTRIES ARE LEFT IN THE DF
+
+
+# 5. Create a new dataframe, called "renewable" which contains all rows with indicator "Share of renewable electricity generation" from the **year 2014**.
+```{r}
+renewable_df <- climate_country_df |> 
+    filter(
+        INDICATOR == "Share of renewable electricity generation" 
+        & YEAR == 2014
+    )
+
+renewable_df |> head(5)
+```
+
+
+- Create a visualization (your choice) showing the distribution of the share of renewable electricity generation across the countries in the dataset. 
+```{r}
+renewable_df |> 
+    ggplot(aes(x = VALUE, y = reorder(COUNTRY, VALUE))) +
+    geom_col() +
+    labs(
+        title = "Share of Renewable Electricity Generation",
+        subtitle = "2014",
+        x = "% Unit",
+        y = "Country"
+    )
+```
+
+
+```{r}
+renewable_df |> 
+    ggplot(aes(x = VALUE)) +
+    geom_histogram(bins = 8) +
+    labs(
+        title = "Share of Renewable Electricity Generation",
+        subtitle = "2014",
+        x = "% Unit",
+        y = "Number of Countries"
+    )
+```
+
+
+
+```{r}
+renewable_df |> 
+    ggplot(aes(x = UNIT, y = VALUE)) +
+    geom_boxplot() +
+    stat_summary(fun=mean, geom="point", color = "red") +
+    labs(
+        title = "Share of Renewable Electricity Generation",
+        subtitle = "2014",
+        x = "",
+        y = "% Unit"
+    )
+```
+
+
+- What can you say about this distribution? 
+ANSWER: THE RENEWABLE ELECTRICITY GENERATION SPANS FROM 0% TO 100% WITH THE MAJORITY UNDER 50% AND THE MEAN BELOW 35%
+
+- Create a new column in renewable, called "majority_renewable" and in this column indicate whether a country is majority renewable (>50% renewable electricity generation) or not. 
+```{r}
+renewable_df <- renewable_df |> 
+    mutate(MAJORITY_RENEWABLE = if_else(VALUE > 50.0, TRUE, FALSE))
+
+renewable_df |> head(5)
+```
+
+
+- What percentage of countries in this data frame were majority renewable in 2014?
+```{r}
+renewable_df |>
+    summarise(sum(MAJORITY_RENEWABLE)) / renewable_df |>
+    count()
+```
+ANSWER: 29.032% OF COUNTRIES WERE MAJORITY RENEWABLE (>50%) IN 2014
+
+
+- How does the "Electricity emissions intensity" in 2014 compare for countries which were majority renewable in 2014 vs those which were not? Create a visualization (your choice) to support your assessment.
+```{r}
+renewable_df |> 
+    select(COUNTRY, MAJORITY_RENEWABLE) |> 
+    right_join(
+        climate_country_df |> 
+            filter(
+                INDICATOR == "Electricity emissions intensity"
+                & YEAR == 2014
+            )
+    ) |> 
+    ggplot(aes(x = MAJORITY_RENEWABLE, y = VALUE)) +
+    geom_boxplot() +
+    labs(
+        title = "Electricity Emissions Intensity",
+        x = "Majority Renewable Energy Country",
+        y = "Electricity Emissions Intensity"
+    )
+```
+
+
+# 6. Which country was the top oil and gas producer in 2014? (Hint: this value can be found by using the indicator "Oil and Gas activity: production")
+```{r}
+oil_gas_df <- climate_country_df |> 
+    filter(INDICATOR == "Oil and Gas activity: production" & YEAR == 2014)
+
+oil_gas_df |> 
+    slice_max(VALUE)
+```
+ANSWER: THE UNITED STATES WAS THE TOP OIL AND GAS PRODUCER IN 2014
+
+
+# 7. Look at the trend in oil and gas production (again, using the "Oil and Gas activity: production" indicator) in the US from 1990 through 2014.
+```{r}
+us_oil_gas_df <- climate_country_df |> 
+    filter(
+        INDICATOR == "Oil and Gas activity: production"
+        & COUNTRY == "United States"
+        & between(YEAR, 1990, 2014)
+    )
+
+us_oil_gas_df |> head(5)
+```
+
+
+What do you notice? Create a visualization (your choice) to support your assessment.
+```{r}
+us_oil_gas_df |> 
+    ggplot(aes(x = YEAR, y = VALUE)) +
+    geom_line() +
+    labs(
+        title = "Oil and Gas activity: production",
+        subtitle = "United States",
+        x = "Year",
+        y = "Mtoe Units"
+    )
+```
+ANSWER: THE UNITED STATES OIL AND GAS PRODUCTION EXPONENTIALLY INCREASED AFTER 2010
+
+
+# 8. Find the total number of new EV sales per year **from 2009 through 2014**. (Sales per country can be found using indicator "New EV sales" and unit "New EV sales".) 
+```{r}
+ev_sales_df <- climate_country_df |> 
+    filter(
+        INDICATOR == "New EV sales"
+        & UNIT == "New EV sales"
+        & between(YEAR, 2009, 2014)
+    ) |> 
+    group_by(YEAR) |> 
+    summarise(TOTAL_SALES = sum(VALUE))
+
+ev_sales_df
+```
+
+What do you notice? Create a visualization (your choice) to support your answer.
+```{r}
+ev_sales_df |> 
+    ggplot(aes(x = YEAR, y = TOTAL_SALES)) +
+    geom_line() +
+    labs(
+        title = "New EV Sales",
+        x = "Year",
+        y = "Sold Units"
+    )
+```
+ANSWER: THERE IS A POSITIVE CORRELATION BETWEEN THE TOTAL EV SALES AND THE YEAR
+
+
+# 9. Create a scatter plot showing Emissions per capita vs GDP per capita for the year 2014. Hint: You can find these values by using indicators "Emissions per capita" and "GDP per capita". Hint #2: You will probably want to subset and then pivot the data in order to create this plot.
+```{r}
+emissions_gdp_df <- climate_country_df |> 
+    filter(
+        INDICATOR %in% c("Emissions per capita", "GDP per capita")
+        & YEAR == 2014
+    ) |> 
+    select(!UNIT) |> 
+    pivot_wider(
+        names_from = INDICATOR,
+        values_from = VALUE
+    ) |> 
+    clean_names(case = "screaming_snake") |> 
+    drop_na()
+
+emissions_gdp_df |> head(5)
+```
+
+
+```{r}
+emissions_gdp_df |> 
+    ggplot(aes(x = GDP_PER_CAPITA, y = EMISSIONS_PER_CAPITA)) +
+    geom_point() +
+    labs(
+        title = "Emissions per capita vs GDP per capita",
+        subtitle = "2014",
+        x = "GDP Per Capita",
+        y = "Emissions Per Capita"
+    )
+```
+
+
+# 10. Find the correlation between emissions per capita and GDP per capita for the year 2014 (dropping NAs). How strong of a (linear) relationship is there between these two measures?
+```{r}
+emissions_gdp_df |> 
+    select(EMISSIONS_PER_CAPITA, GDP_PER_CAPITA) |> 
+    cor()
+```
+
+
+```{r}
+cor.test(emissions_gdp_df$EMISSIONS_PER_CAPITA, emissions_gdp_df$GDP_PER_CAPITA)
+```
+ANSWER: THERE IS A STRONG LINEAR RELATIONSHIP BETWEEN EMISSIONS AND GDP PER CAPITA THAT IS STATISTICALLY SIGNIFICANT
+
+
+Once you are finished, email your file to michael.holloway@nashvillesoftwareschool.com.
